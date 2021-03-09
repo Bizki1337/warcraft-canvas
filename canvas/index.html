@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jopa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="box">
+        <canvas id="canvas" width="480" height="480">
+        </canvas>        
+    </div>
+
+    <script>
+        var bw = 480;
+        var bh = 480;
+        var p = 0;
+        var cw = 40
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d");
+        let positionX, positionY;
+        let min = Math.ceil(0);
+        let max = Math.floor(480);
+        let positionX_object = null;
+        let positionY_object = null;
+        let positionX_ziggurat = 0;
+        let positionY_ziggurat = 0;
+        let positionX_tree = 0;
+        let positionY_tree = 0;
+
+    function drawBoard(){
+            for (var x = 0; x <= bw; x += cw) {
+                context.moveTo(0.5 + x + p, p);
+                context.lineTo(0.5 + x + p, bh + p);
+            }
+
+            for (var x = 0; x <= bh; x += cw) {
+                context.moveTo(p, 0.5 + x + p);
+                context.lineTo(bw + p, 0.5 + x + p);
+            } 
+            context.strokeStyle = "black";
+            context.stroke();
+        }
+
+    drawBoard();
+
+    function drawMainCell(positionX_object, positionY_object) {
+        let arr = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480];
+            
+        console.log('positionX_object1: ', positionX_object)
+        positionX = Math.floor(Math.random() * (max - min + 1)) + min;
+        for (let i = 0; i <= arr.length; i++) {
+        if (positionX >= arr[i] && positionX < arr[i+1]) {
+            positionX_object = arr[i];
+            console.log('positionX_object2', positionX_object)
+            }
+        }
+        positionY = Math.floor(Math.random() * (max - min + 1)) + min;
+        for (let i = 0; i <= arr.length; i++) {
+        if (positionY >= arr[i] && positionY < arr[i+1]) {
+            positionY_object = arr[i];
+            }
+        }
+        context.fillRect(positionX_object, positionY_object, 40, 40);    
+        return [positionX_object, positionY_object]    
+    };
+
+    function drawZiggurat() {
+        var context2 = canvas.getContext("2d");
+        context2.beginPath();
+        context2.fillStyle = "purple";
+        let positionsTree = drawMainCell(positionX_ziggurat, positionY_ziggurat);
+        positionX_ziggurat = positionsTree[0]
+        positionY_ziggurat = positionsTree[1]
+    };
+
+    drawZiggurat();
+
+    function drawTree() {
+        var context4 = canvas.getContext("2d");
+        context4.beginPath();
+        context4.fillStyle = "green";
+
+        let positionsTree = drawMainCell(positionX_tree, positionY_tree);
+        console.log('qweqwe', positionsTree)
+        positionX_tree = positionsTree[0]
+        positionY_tree = positionsTree[1]
+
+        const healthLand_top = positionY_tree - 40;
+        const healthLand_bottom = positionY_tree + 40;
+        const healthLand_right = positionX_tree + 40;
+        const healthLand_left = positionX_tree - 40; 
+
+        context4.fillRect(positionX_tree, healthLand_top, 40, 40);
+        context4.fillRect(positionX_tree, healthLand_bottom, 40, 40);
+        context4.fillRect(healthLand_right, positionY_tree, 40, 40);
+        context4.fillRect(healthLand_left, positionY_tree, 40, 40);
+
+        let healthLand_top_leftY;
+        let healthLand_top_leftX;
+
+        let healthLand_top_rightX;
+        let healthLand_top_rightY;
+
+        let healthLand_bottom_leftY;
+        let healthLand_bottom_leftX;
+
+        let healthLand_bottom_rightX;
+        let healthLand_bottom_rightY;
+    };
+
+    drawTree();
+
+    function getCursorPosition(canvas, event, cw) {
+        const rect = canvas.getBoundingClientRect()
+        const x = event.clientX - rect.left
+        const y = event.clientY - rect.top
+        const cy = (y + (cw - y%cw))/cw
+        const cx = (x + (cw - x%cw))/cw
+        console.log(x)
+        //console.log("x: " + cx + " y: " + cy, (cx*40) - 40, (cy*40) -40)
+        var context3 = canvas.getContext("2d");
+        context3.beginPath();
+        context3.fillStyle = "grey";
+
+        const positionX_ziggurat_end = positionX_ziggurat + 40;
+        const positionY_ziggurat_end = positionY_ziggurat + 40;
+        const infectedLand_top = positionY_ziggurat - 40;
+        const infectedLand_bottom = positionY_ziggurat + 40;
+        const infectedLand_right = positionX_ziggurat + 40;
+        const infectedLand_left = positionX_ziggurat - 40;
+
+        let min = 0;
+        let max = 1;
+
+        let arrWithRandomNumbers = []
+
+        for (let i = 0; i <= 8; i++) {
+            arrWithRandomNumbers[i] = Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        let infectedLand_top_leftY;
+        let infectedLand_top_leftX;
+
+        let infectedLand_top_topX;
+        let infectedLand_top_topY;
+
+        let infectedLand_top_rightX;
+        let infectedLand_top_rightY;
+
+        let infectedLand_left_leftX;
+        let infectedLand_left_leftY;
+
+        let infectedLand_right_rightX;
+        let infectedLand_right_rightY;
+
+        let infectedLand_bottom_leftY;
+        let infectedLand_bottom_leftX;
+
+        let infectedLand_bottom_rightX;
+        let infectedLand_bottom_rightY;
+
+        let infectedLand_bottom_bottomX;
+        let infectedLand_bottom_bottomY;
+
+        if (x >= positionX_ziggurat && x <= positionX_ziggurat_end && y >= positionY_ziggurat && y <= positionY_ziggurat_end) {
+            context3.fillRect(positionX_ziggurat, infectedLand_top, 40, 40);
+            context3.fillRect(positionX_ziggurat, infectedLand_bottom, 40, 40);
+            context3.fillRect(infectedLand_right, positionY_ziggurat, 40, 40);
+            context3.fillRect(infectedLand_left, positionY_ziggurat, 40, 40);
+            if (arrWithRandomNumbers[0]) {
+                infectedLand_top_leftX = positionX_ziggurat - 40;
+                infectedLand_top_leftY = infectedLand_top;
+                context3.fillRect(infectedLand_top_leftX, infectedLand_top_leftY, 40, 40);
+            }
+            if (arrWithRandomNumbers[1]) {
+                infectedLand_top_topX = positionX_ziggurat;
+                infectedLand_top_rightY = infectedLand_top - 40;
+                context3.fillRect(infectedLand_top_topX, infectedLand_top_rightY, 40, 40);
+            }
+            if (arrWithRandomNumbers[2]) {
+                infectedLand_top_rightX = positionX_ziggurat + 40;
+                infectedLand_top_rightY = infectedLand_top;
+                context3.fillRect(infectedLand_top_rightX, infectedLand_top_rightY, 40, 40);
+            }
+            if (arrWithRandomNumbers[3]) {
+                infectedLand_left_leftX = infectedLand_left - 40;
+                infectedLand_left_leftY = positionY_ziggurat;
+                context3.fillRect(infectedLand_left_leftX, infectedLand_left_leftY, 40, 40);
+            }
+            if (arrWithRandomNumbers[4]) {
+                infectedLand_right_rightX = infectedLand_right + 40;
+                infectedLand_right_rightY = positionY_ziggurat;
+                context3.fillRect(infectedLand_right_rightX, infectedLand_right_rightY, 40, 40);
+            }
+            if (arrWithRandomNumbers[5]) {
+                infectedLand_bottom_leftX = positionX_ziggurat - 40;
+                infectedLand_bottom_leftY = infectedLand_bottom;
+                context3.fillRect(infectedLand_bottom_leftX, infectedLand_bottom_leftY, 40, 40);
+            }
+            if (arrWithRandomNumbers[6]) {
+                infectedLand_bottom_rightX = positionX_ziggurat + 40;
+                infectedLand_bottom_rightY = infectedLand_bottom;
+                context3.fillRect(infectedLand_bottom_rightX, infectedLand_bottom_rightY, 40, 40);
+            }
+            if (arrWithRandomNumbers[7]) {
+                infectedLand_bottom_bottomX = positionX_ziggurat;
+                infectedLand_bottom_bottomY = infectedLand_bottom + 40;
+                context3.fillRect(infectedLand_bottom_bottomX, infectedLand_bottom_bottomY, 40, 40);
+            }
+            drawTree(positionX_tree, positionY_tree)
+            console.log('positionX_tree', positionX_tree)
+            console.log('positionY_tree', positionY_tree)
+            
+        }
+            if(cx=== 12 && cy=== 12){
+                context3.fillRect(9*cw, 6*cw, 3*cw, 6*cw);       
+            }
+
+   
+}
+
+
+canvas.addEventListener('mousedown', function(e) {
+    getCursorPosition(canvas, e, cw)
+})
+    </script>
+
+</body>
+</html>
